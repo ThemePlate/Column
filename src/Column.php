@@ -30,7 +30,7 @@ class Column {
 		);
 
 		if ( ! Main::is_complete( $config, $expected ) ) {
-			throw new Exception();
+			throw new \Exception();
 		}
 
 		$defaults     = array(
