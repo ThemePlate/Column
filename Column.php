@@ -9,6 +9,7 @@
 
 namespace ThemePlate;
 
+use Exception;
 use ThemePlate\Core\Helper\Main;
 
 class Column {
@@ -30,7 +31,7 @@ class Column {
 		);
 
 		if ( ! Main::is_complete( $config, $expected ) ) {
-			throw new \Exception();
+			throw new Exception();
 		}
 
 		$defaults     = array(
@@ -59,10 +60,13 @@ class Column {
 			$context['type'] = 'post_type';
 
 			if ( ! empty( $config['post_type'] ) ) {
-				$context['list'][0]['modify'] = $context['list'][0]['populate'] = $config['post_type'] . '_posts';
+				$context['list'][0]['modify']   = $config['post_type'] . '_posts';
+				$context['list'][0]['populate'] = $config['post_type'] . '_posts';
 			} else {
-				$context['list'][0]['modify'] = $context['list'][0]['populate'] = 'posts';
-				$context['list'][1]['modify'] = $context['list'][1]['populate'] = 'pages';
+				$context['list'][0]['modify']   = 'posts';
+				$context['list'][0]['populate'] = 'posts';
+				$context['list'][1]['modify']   = 'pages';
+				$context['list'][1]['populate'] = 'pages';
 			}
 		} elseif ( isset( $config['taxonomy'] ) ) {
 			$context['type'] = 'taxonomy';
@@ -81,8 +85,9 @@ class Column {
 				}
 			}
 		} elseif ( isset( $config['users'] ) ) {
-			$context['type']              = 'users';
-			$context['list'][0]['modify'] = $context['list'][0]['populate'] = 'users';
+			$context['type']                = 'users';
+			$context['list'][0]['modify']   = 'users';
+			$context['list'][0]['populate'] = 'users';
 		}
 
 		$this->config['context'] = $context;
@@ -95,7 +100,7 @@ class Column {
 	public function modify( array $columns ): array {
 
 		$config = $this->config;
-		$column = $config['id'] . ' ' . $config['class'];
+		$column = trim( $config['id'] . ' ' . $config['class'] );
 
 		$columns[ $column ] = $config['title'];
 
@@ -119,12 +124,14 @@ class Column {
 
 		if ( 'post_type' === $config['context']['type'] ) {
 			$column_name = $content_name;
-			$object_id   = $name_id;
+			$object_id   = (int) $name_id;
 		} else {
 			$column_name = $name_id;
 		}
 
-		if ( $column_name !== $config['id'] . ' ' . $config['class'] ) {
+		$wanted = trim( $config['id'] . ' ' . $config['class'] );
+
+		if ( $column_name !== $wanted ) {
 			return $content_name;
 		}
 
