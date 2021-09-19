@@ -13,10 +13,10 @@ use ThemePlate\Core\Helper\Main;
 
 class Column {
 
-	private $config;
+	private array $config;
 
 
-	public function __construct( $config ) {
+	public function __construct( array $config ) {
 
 		$expected = array(
 			'id',
@@ -50,7 +50,7 @@ class Column {
 	}
 
 
-	private function context() {
+	private function context(): array {
 
 		$config  = $this->config;
 		$context = array();
@@ -92,7 +92,7 @@ class Column {
 	}
 
 
-	public function modify( $columns ) {
+	public function modify( array $columns ): array {
 
 		$config = $this->config;
 		$column = $config['id'] . ' ' . $config['class'];
@@ -113,7 +113,7 @@ class Column {
 	}
 
 
-	public function populate( $content_name, $name_id, $object_id = null ) {
+	public function populate( $content_name, string $name_id, int $object_id = 0 ) {
 
 		$config = $this->config;
 
