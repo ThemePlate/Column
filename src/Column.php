@@ -118,7 +118,7 @@ class Column {
 	}
 
 
-	public function populate( ?string $content_name, string $name_id, int $object_id = 0 ): void {
+	public function populate( $content_name, string $name_id, int $object_id = 0 ) {
 
 		$config = $this->config;
 
@@ -132,10 +132,17 @@ class Column {
 		$wanted = trim( $config['id'] . ' ' . $config['class'] );
 
 		if ( $column_name !== $wanted ) {
-			return;
+			return $content_name;
 		}
 
+		if ( 'post_type' === $config['context']['type'] ) {
+			return call_user_func( $config['callback'], $object_id, $config['callback_args'] );
+		}
+
+		ob_start();
 		call_user_func( $config['callback'], $object_id, $config['callback_args'] );
+
+		return ob_get_clean();
 
 	}
 
