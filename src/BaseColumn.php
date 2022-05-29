@@ -10,6 +10,7 @@
 namespace ThemePlate\Column;
 
 use ThemePlate\Column\Interfaces\CommonInterface;
+use ThemePlate\Column\Interfaces\PopulateActionInterface;
 use ThemePlate\Column\Traits\CanPopulate;
 
 abstract class BaseColumn implements CommonInterface {
@@ -49,7 +50,7 @@ abstract class BaseColumn implements CommonInterface {
 
 	public function init(): void {
 
-		$args = static::class === PostTypeColumn::class ? 2 : 3;
+		$args = ( $this instanceof PopulateActionInterface ) ? 2 : 3;
 
 		foreach ( $this->context() as $item ) {
 			add_filter( 'manage_' . $item['modify'] . '_columns', array( $this, 'modify' ) );
