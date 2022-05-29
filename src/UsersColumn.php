@@ -19,12 +19,12 @@ class UsersColumn extends BaseColumn implements PopulateFilterInterface {
 
 	protected function context(): array {
 
-		$context = array();
+		$context = array(
+			'modify'   => 'users',
+			'populate' => 'users',
+		);
 
-		$context[0]['modify']   = 'users';
-		$context[0]['populate'] = 'users';
-
-		return $context;
+		return array( $context );
 
 	}
 

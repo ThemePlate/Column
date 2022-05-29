@@ -22,27 +22,29 @@ class TaxonomyColumnTest extends AbstractTest {
 		return array(
 			'with location specified'    => array(
 				true,
-				array( 'edit-' . $this->default['location'] ),
 				array( $this->default['location'] ),
 			),
 			'with no location specified' => array(
 				false,
-				array( 'edit-category', 'edit-post_tag' ),
-				array( 'category', 'post_tag' ),
+				array( 'category', 'post_tag' ), // default locations
+			),
+			'with multiple locations'    => array(
+				true,
+				array( 'provider', 'client', 'state' ),
 			),
 		);
 	}
 
-	protected function get_default_location_modify_filter_hook_name(): string {
-		return sprintf( self::MODIFY_FILTER, 'edit-' . $this->default['location'] );
+	protected function get_modify_filter_hook_name( string $location ): string {
+		return sprintf( self::MODIFY_FILTER, 'edit-' . $location );
 	}
 
-	protected function get_default_location_populate_filter_hook_name(): string {
-		return sprintf( self::POPULATE_FILTER, $this->default['location'] );
+	protected function get_populate_filter_hook_name( string $location ): string {
+		return sprintf( self::POPULATE_FILTER, $location );
 	}
 
-	protected function get_default_location_populate_output( string $column_name, int $object_id ): string {
+	protected function get_populate_output( string $column_name, int $object_id ): string {
 		// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-terms-list-table.php#L638
-		return apply_filters( $this->get_default_location_populate_filter_hook_name(), '', $column_name, $object_id );
+		return apply_filters( $this->get_populate_filter_hook_name( $this->default['location'] ), '', $column_name, $object_id );
 	}
 }

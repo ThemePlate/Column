@@ -23,35 +23,30 @@ abstract class AbstractTest extends WP_UnitTestCase {
 
 	abstract protected function factory_create_object(): int;
 
-	abstract protected function get_default_location_modify_filter_hook_name(): string;
+	abstract protected function get_modify_filter_hook_name( string $location ): string;
 
-	abstract protected function get_default_location_populate_filter_hook_name(): string;
+	abstract protected function get_populate_filter_hook_name( string $location ): string;
 
-	abstract protected function get_default_location_populate_output( string $column_name, int $object_id ): string;
+	abstract protected function get_populate_output( string $column_name, int $object_id ): string;
 
 	/**
 	 * @dataProvider for_firing_init_actually_add_hooks
 	 */
-	public function test_firing_init_actually_add_hooks( bool $location, array $modifies, array $populates ): void {
+	public function test_firing_init_actually_add_hooks( bool $has_location, array $locations ): void {
 		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
-		if ( $location ) {
+		if ( $has_location ) {
 			/** @var HasLocation $column */
-			$column->location( $this->default['location'] );
+			foreach ( $locations as $location ) {
+				$column->location( $location );
+			}
 		}
 
 		$column->init();
 
-		foreach ( $modifies as $modify ) {
-			$hook_name = sprintf( self::MODIFY_FILTER, $modify );
-
-			$this->assertSame( 10, has_filter( $hook_name, array( $column, 'modify' ) ) );
-		}
-
-		foreach ( $populates as $populate ) {
-			$hook_name = sprintf( self::POPULATE_FILTER, $populate );
-
-			$this->assertSame( 10, has_action( $hook_name, array( $column, 'populate' ) ) );
+		foreach ( $locations as $location ) {
+			$this->assertSame( 10, has_filter( $this->get_modify_filter_hook_name( $location ), array( $column, 'modify' ) ) );
+			$this->assertSame( 10, has_action( $this->get_populate_filter_hook_name( $location ), array( $column, 'populate' ) ) );
 		}
 	}
 
@@ -71,7 +66,7 @@ abstract class AbstractTest extends WP_UnitTestCase {
 
 		$column->init();
 
-		$output = apply_filters( $this->get_default_location_modify_filter_hook_name(), $this->columns );
+		$output = apply_filters( $this->get_modify_filter_hook_name( $this->default['location'] ), $this->columns );
 		$expect = $position > 0 ? $position : count( $output ) - 1;
 
 		$this->assertIsArray( $output );
@@ -99,7 +94,7 @@ abstract class AbstractTest extends WP_UnitTestCase {
 				$expect = (string) $object_id;
 			}
 
-			$this->assertSame( $expect, $this->get_default_location_populate_output( $column_name, $object_id ) );
+			$this->assertSame( $expect, $this->get_populate_output( $column_name, $object_id ) );
 		}
 	}
 }

@@ -23,14 +23,17 @@ class PostTypeColumn extends BaseColumn implements PopulateActionInterface {
 
 		$context = array();
 
-		if ( ! empty( $this->location ) ) {
-			$context[0]['modify']   = $this->location . '_posts';
-			$context[0]['populate'] = $this->location . '_posts';
-		} else {
-			$context[0]['modify']   = 'posts';
-			$context[0]['populate'] = 'posts';
-			$context[1]['modify']   = 'pages';
-			$context[1]['populate'] = 'pages';
+		$post_types = $this->locations;
+
+		if ( empty( $post_types ) ) {
+			$post_types = array( 'post', 'page' );
+		}
+
+		foreach ( $post_types as $location ) {
+			$context[] = array(
+				'modify'   => $location . '_posts',
+				'populate' => $location . '_posts',
+			);
 		}
 
 		return $context;

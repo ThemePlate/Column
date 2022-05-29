@@ -23,21 +23,20 @@ class UsersColumnTest extends AbstractTest {
 			'with no location intended' => array(
 				false,
 				array( 'users' ),
-				array( 'users' ),
 			),
 		);
 	}
 
-	protected function get_default_location_modify_filter_hook_name(): string {
+	protected function get_modify_filter_hook_name( string $location ): string {
 		return sprintf( self::MODIFY_FILTER, 'users' );
 	}
 
-	protected function get_default_location_populate_filter_hook_name(): string {
+	protected function get_populate_filter_hook_name( string $location ): string {
 		return sprintf( self::POPULATE_FILTER, 'users' );
 	}
 
-	protected function get_default_location_populate_output( string $column_name, int $object_id ): string {
+	protected function get_populate_output( string $column_name, int $object_id ): string {
 		// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-users-list-table.php#L615
-		return apply_filters( $this->get_default_location_populate_filter_hook_name(), '', $column_name, $object_id );
+		return apply_filters( $this->get_populate_filter_hook_name( $this->default['location'] ), '', $column_name, $object_id );
 	}
 }

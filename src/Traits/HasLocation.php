@@ -11,12 +11,12 @@ namespace ThemePlate\Column\Traits;
 
 trait HasLocation {
 
-	protected string $location = '';
+	protected array $locations = array();
 
 
 	public function location( string $location ): self {
 
-		$this->location = $location;
+		$this->locations[] = $location;
 
 		return $this;
 

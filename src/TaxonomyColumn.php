@@ -23,18 +23,17 @@ class TaxonomyColumn extends BaseColumn implements PopulateFilterInterface {
 
 		$context = array();
 
-		if ( ! empty( $this->location ) ) {
-			$context[0]['modify']   = 'edit-' . $this->location;
-			$context[0]['populate'] = $this->location;
-		} else {
-			$taxonomies   = get_taxonomies( array( '_builtin' => false ) );
-			$taxonomies[] = 'category';
-			$taxonomies[] = 'post_tag';
+		$taxonomies = $this->locations;
 
-			foreach ( $taxonomies as $index => $taxonomy ) {
-				$context[ $index ]['modify']   = 'edit-' . $taxonomy;
-				$context[ $index ]['populate'] = $taxonomy;
-			}
+		if ( empty( $taxonomies ) ) {
+			$taxonomies = array( 'category', 'post_tag' );
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			$context[] = array(
+				'modify'   => 'edit-' . $taxonomy,
+				'populate' => $taxonomy,
+			);
 		}
 
 		return $context;
