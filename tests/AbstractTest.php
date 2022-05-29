@@ -58,12 +58,12 @@ abstract class AbstractTest extends WP_UnitTestCase {
 	/**
 	 * @dataProvider for_modify_columns
 	 */
-	public function test_modify_columns( string $class, string $key, int $position ): void {
+	public function test_modify_columns( string $title, string $class, string $column_key, int $position ): void {
 		$config = array(
 			'position' => $position,
 			'class'    => $class,
 		);
-		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'], $config );
+		$column = $this->get_tested_class( $title, $this->default['callback'], $config );
 
 		if ( method_exists( $column, 'location' ) ) {
 			$column->location( $this->default['location'] );
@@ -75,9 +75,9 @@ abstract class AbstractTest extends WP_UnitTestCase {
 		$expect = $position > 0 ? $position : count( $output ) - 1;
 
 		$this->assertIsArray( $output );
-		$this->assertArrayHasKey( $key, $output );
-		$this->assertSame( $this->default['title'], $output[ $key ] );
-		$this->assertSame( $expect, array_search( $this->default['title'], array_values( $output ), true ) );
+		$this->assertArrayHasKey( $column_key, $output );
+		$this->assertSame( $title, $output[ $column_key ] );
+		$this->assertSame( $expect, array_search( $title, array_values( $output ), true ) );
 	}
 
 	public function test_populate_columns(): void {

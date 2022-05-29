@@ -24,10 +24,13 @@ trait TestCommon {
 
 	public function for_modify_columns(): array {
 		return array(
-			'with class string'    => array( 'this', $this->default['id'] . ' this', 1 ),
-			'with class numeric'   => array( '1', $this->default['id'] . ' 1', 2 ),
-			'with no class set'    => array( '', $this->default['id'], 3 ),
-			'with no position set' => array( '', $this->default['id'], 0 ),
+			'with class string'    => array( $this->default['title'], 'this', $this->default['id'] . ' this', 1 ),
+			'with class numeric'   => array( $this->default['title'], '1', $this->default['id'] . ' 1', 2 ),
+			'with no class set'    => array( $this->default['title'], '', $this->default['id'], 3 ),
+			'with no position set' => array( $this->default['title'], '', $this->default['id'], 0 ),
+			'with spaced title'    => array( 'Wanted Title', '', 'wanted-title', 0 ),
+			'with underscores'     => array( 'I_WANT_THIS', '', 'i-want-this', 0 ),
+			'with crazy string'    => array( ' $aw;Pv_ 1@2 ', '', '-$aw;pv--1@2-', 0 ),
 		);
 	}
 
