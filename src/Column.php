@@ -9,41 +9,80 @@
 
 namespace ThemePlate;
 
-use Exception;
-use ThemePlate\Core\Helper\Main;
-
 class Column {
 
-	private array $config;
+	protected array $defaults = array(
+		'location'      => 'post_type',
+		'specific'      => '',
+		'position'      => 0,
+		'callback_args' => array(),
+		'class'         => '',
+	);
+	protected string $identifier;
+	/**
+	 * @var callable
+	 */
+	protected $callback;
+	protected array $config;
 
 
-	public function __construct( array $config ) {
+	public const LOCATIONS = array(
+		'post_type',
+		'taxonomy',
+		'users',
+	);
 
-		$expected = array(
-			'id',
-			'title',
-			'callback',
-			array(
-				'post_type',
-				'taxonomy',
-				'users',
-			),
-		);
 
-		if ( ! Main::is_complete( $config, $expected ) ) {
-			throw new Exception();
+	public function __construct( string $identifier, callable $callback, array $config = array() ) {
+
+		$this->identifier = $identifier;
+		$this->callback   = $callback;
+		$this->config     = $this->check( $config );
+
+	}
+
+
+	protected function check( array $config ): array {
+
+		$config['title']    = $this->maybe_convert( $config['title'] ?? '' );
+		$config['location'] = $this->fool_proof( $config['location'] ?? '' );
+
+		$config = array_merge( $this->defaults, $config );
+
+		$config['key'] = trim( $this->identifier . ' ' . $config['class'] );
+
+		return $config;
+
+	}
+
+
+	protected function maybe_convert( string $title ): string {
+
+		if ( '' !== $title ) {
+			return $title;
 		}
 
-		$defaults     = array(
-			'position'      => 0,
-			'callback_args' => array(),
-			'class'         => '',
-		);
-		$this->config = Main::fool_proof( $defaults, $config );
+		return mb_convert_case( $this->identifier, MB_CASE_TITLE, 'UTF-8' );
 
-		$context = $this->context();
+	}
 
-		foreach ( $context['list'] as $item ) {
+
+	protected function fool_proof( string $location ): string {
+
+		$location = strtolower( $location );
+
+		if ( ! in_array( $location, self::LOCATIONS, true ) ) {
+			$location = 'post_type';
+		}
+
+		return $location;
+
+	}
+
+
+	public function init(): void {
+
+		foreach ( $this->context() as $item ) {
 			add_filter( 'manage_' . $item['modify'] . '_columns', array( $this, 'modify' ), 10 );
 			add_action( 'manage_' . $item['populate'] . '_custom_column', array( $this, 'populate' ), 10, 3 );
 		}
@@ -51,46 +90,39 @@ class Column {
 	}
 
 
-	private function context(): array {
+	protected function context(): array {
 
 		$config  = $this->config;
 		$context = array();
 
-		if ( isset( $config['post_type'] ) ) {
-			$context['type'] = 'post_type';
-
-			if ( ! empty( $config['post_type'] ) ) {
-				$context['list'][0]['modify']   = $config['post_type'] . '_posts';
-				$context['list'][0]['populate'] = $config['post_type'] . '_posts';
+		if ( 'post_type' === $config['location'] ) {
+			if ( ! empty( $config['specific'] ) ) {
+				$context[0]['modify']   = $config['specific'] . '_posts';
+				$context[0]['populate'] = $config['specific'] . '_posts';
 			} else {
-				$context['list'][0]['modify']   = 'posts';
-				$context['list'][0]['populate'] = 'posts';
-				$context['list'][1]['modify']   = 'pages';
-				$context['list'][1]['populate'] = 'pages';
+				$context[0]['modify']   = 'posts';
+				$context[0]['populate'] = 'posts';
+				$context[1]['modify']   = 'pages';
+				$context[1]['populate'] = 'pages';
 			}
-		} elseif ( isset( $config['taxonomy'] ) ) {
-			$context['type'] = 'taxonomy';
-
-			if ( ! empty( $config['taxonomy'] ) ) {
-				$context['list'][0]['modify']   = 'edit-' . $config['taxonomy'];
-				$context['list'][0]['populate'] = $config['taxonomy'];
+		} elseif ( 'taxonomy' === $config['location'] ) {
+			if ( ! empty( $config['specific'] ) ) {
+				$context[0]['modify']   = 'edit-' . $config['specific'];
+				$context[0]['populate'] = $config['specific'];
 			} else {
 				$taxonomies   = get_taxonomies( array( '_builtin' => false ) );
 				$taxonomies[] = 'category';
 				$taxonomies[] = 'post_tag';
 
 				foreach ( $taxonomies as $index => $taxonomy ) {
-					$context['list'][ $index ]['modify']   = 'edit-' . $taxonomy;
-					$context['list'][ $index ]['populate'] = $taxonomy;
+					$context[ $index ]['modify']   = 'edit-' . $taxonomy;
+					$context[ $index ]['populate'] = $taxonomy;
 				}
 			}
-		} elseif ( isset( $config['users'] ) ) {
-			$context['type']                = 'users';
-			$context['list'][0]['modify']   = 'users';
-			$context['list'][0]['populate'] = 'users';
+		} elseif ( 'users' === $config['location'] ) {
+			$context[0]['modify']   = 'users';
+			$context[0]['populate'] = 'users';
 		}
-
-		$this->config['context'] = $context;
 
 		return $context;
 
@@ -100,9 +132,8 @@ class Column {
 	public function modify( array $columns ): array {
 
 		$config = $this->config;
-		$column = trim( $config['id'] . ' ' . $config['class'] );
 
-		$columns[ $column ] = $config['title'];
+		$columns[ $config['key'] ] = $config['title'];
 
 		$position = $config['position'];
 
@@ -122,25 +153,23 @@ class Column {
 
 		$config = $this->config;
 
-		if ( 'post_type' === $config['context']['type'] ) {
+		if ( 'post_type' === $config['location'] ) {
 			$column_name = $content_name;
 			$object_id   = (int) $name_id;
 		} else {
 			$column_name = $name_id;
 		}
 
-		$wanted = trim( $config['id'] . ' ' . $config['class'] );
-
-		if ( $column_name !== $wanted ) {
+		if ( $column_name !== $config['key'] ) {
 			return $content_name;
 		}
 
-		if ( 'post_type' === $config['context']['type'] ) {
-			return call_user_func( $config['callback'], $object_id, $config['callback_args'] );
+		if ( 'post_type' === $config['location'] ) {
+			return call_user_func( $this->callback, $object_id, $config['callback_args'] );
 		}
 
 		ob_start();
-		call_user_func( $config['callback'], $object_id, $config['callback_args'] );
+		call_user_func( $this->callback, $object_id, $config['callback_args'] );
 
 		return ob_get_clean();
 

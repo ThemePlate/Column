@@ -68,8 +68,10 @@ class ColumnTest extends WP_UnitTestCase {
 	/**
 	 * @dataProvider for_instantiating_actually_add_hooks
 	 */
-	public function test_instantiating_actually_add_hooks( string $type, string $specific, array $modifies, array $populates ): void {
-		$column = new Column( array_merge( $this->default, array( $type => $specific ) ) );
+	public function test_instantiating_actually_add_hooks( string $location, string $specific, array $modifies, array $populates ): void {
+		$column = new Column( $this->default['id'], $this->default['callback'], compact( 'location', 'specific' ) );
+
+		$column->init();
 
 		foreach ( $modifies as $modify ) {
 			$this->assertSame( 10, has_filter( 'manage_' . $modify . '_columns', array( $column, 'modify' ) ) );
@@ -93,16 +95,14 @@ class ColumnTest extends WP_UnitTestCase {
 	 * @dataProvider for_modify_columns
 	 */
 	public function test_modify_columns( string $class, string $key, int $position ): void {
-		$config = array_merge(
-			$this->default,
-			array(
-				'class'     => $class,
-				'position'  => $position,
-				'post_type' => 'custom',
-			)
+		$config = array(
+			'title'    => $this->default['title'],
+			'location' => 'post_type',
+			'specific' => 'custom',
+			'position' => $position,
+			'class'    => $class,
 		);
-
-		new Column( $config );
+		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
 
 		$output = apply_filters( 'manage_custom_posts_columns', $this->columns );
 		$expect = $position > 0 ? $position : count( $output ) - 1;
@@ -124,7 +124,11 @@ class ColumnTest extends WP_UnitTestCase {
 	 * @dataProvider for_populate_columns
 	 */
 	public function test_populate_columns( string $type ): void {
-		new Column( array_merge( $this->default, array( $type => 'custom' ) ) );
+		$config = array(
+			'location' => $type,
+			'specific' => 'custom',
+		);
+		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
 
 		$column_names = array_merge( array_keys( $this->columns ), array( $this->default['id'] ) );
 		$object_id    = 0;
