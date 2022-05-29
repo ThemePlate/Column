@@ -6,7 +6,9 @@
 
 namespace Tests;
 
-use ThemePlate\Column;
+use ThemePlate\Column\PostTypeColumn;
+use ThemePlate\Column\TaxonomyColumn;
+use ThemePlate\Column\UsersColumn;
 use WP_UnitTestCase;
 
 class ColumnTest extends WP_UnitTestCase {
@@ -23,6 +25,12 @@ class ColumnTest extends WP_UnitTestCase {
 		'title'  => 'Title',
 		'author' => 'Author',
 		'date'   => 'Date',
+	);
+
+	private array $class_map = array(
+		'post_type' => PostTypeColumn::class,
+		'taxonomy'  => TaxonomyColumn::class,
+		'users'     => UsersColumn::class,
 	);
 
 	public function for_instantiating_actually_add_hooks(): array {
@@ -69,8 +77,14 @@ class ColumnTest extends WP_UnitTestCase {
 	/**
 	 * @dataProvider for_instantiating_actually_add_hooks
 	 */
-	public function test_instantiating_actually_add_hooks( string $location, string $specific, array $modifies, array $populates ): void {
-		$column = new Column( $this->default['id'], $this->default['callback'], compact( 'location', 'specific' ) );
+	public function test_instantiating_actually_add_hooks( string $type, string $specific, array $modifies, array $populates ): void {
+		$class  = $this->class_map[ $type ];
+		$column = new $class( $this->default['id'], $this->default['callback'] );
+
+		if ( 'users' !== $type ) {
+			/** @var $column PostTypeColumn|TaxonomyColumn */
+			$column->location( $specific );
+		}
 
 		$column->init();
 
@@ -98,14 +112,13 @@ class ColumnTest extends WP_UnitTestCase {
 	public function test_modify_columns( string $class, string $key, int $position ): void {
 		$config = array(
 			'title'    => $this->default['title'],
-			'location' => 'post_type',
-			'specific' => $this->default['specific'],
 			'position' => $position,
 			'class'    => $class,
 		);
-		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
+		( new PostTypeColumn( $this->default['id'], $this->default['callback'], $config ) )
+			->location( $this->default['specific'] )->init();
 
-		$output = apply_filters( 'manage_' . $config['specific'] . '_posts_columns', $this->columns );
+		$output = apply_filters( 'manage_' . $this->default['specific'] . '_posts_columns', $this->columns );
 		$expect = $position > 0 ? $position : count( $output ) - 1;
 		$this->assertIsArray( $output );
 		$this->assertArrayHasKey( $key, $output );
@@ -125,41 +138,47 @@ class ColumnTest extends WP_UnitTestCase {
 	 * @dataProvider for_populate_columns
 	 */
 	public function test_populate_columns( string $type ): void {
-		$config = array(
-			'location' => $type,
-			'specific' => $this->default['specific'],
-		);
-		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
+		$class  = $this->class_map[ $type ];
+		$column = ( new $class( $this->default['id'], $this->default['callback'] ) );
+
+		if ( 'users' !== $type ) {
+			/** @var $column PostTypeColumn|TaxonomyColumn */
+			$column->location( $this->default['specific'] );
+		}
+
+		$column->init();
 
 		$column_names = array_merge( array_keys( $this->columns ), array( $this->default['id'] ) );
 		$object_id    = 0;
 		$output       = 0;
 
 		foreach ( $column_names as $column_name ) {
-			if ( $this->default['id'] !== $column_name ) {
-				continue;
-			}
-
 			if ( 'post_type' === $type ) {
 				$object_id = $this->factory()->post->create();
 
 				ob_start();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-posts-list-table.php#L1349
-				do_action( 'manage_' . $config['specific'] . '_posts_custom_column', $column_name, $object_id );
+				do_action( 'manage_' . $this->default['specific'] . '_posts_custom_column', $column_name, $object_id );
 
 				$output = ob_get_clean();
 			} elseif ( 'taxonomy' === $type ) {
 				$object_id = $this->factory()->term->create();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-terms-list-table.php#L638
-				$output = apply_filters( 'manage_' . $config['specific'] . '_custom_column', '', $column_name, $object_id );
+				$output = apply_filters( 'manage_' . $this->default['specific'] . '_custom_column', '', $column_name, $object_id );
 			} elseif ( 'users' === $type ) {
 				$object_id = $this->factory()->user->create();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-users-list-table.php#L615
 				$output = apply_filters( 'manage_users_custom_column', '', $column_name, $object_id );
 			}
-		}
 
-		$this->assertSame( (string) $object_id, $output );
+			$expect = ''; // Current column not ours
+
+			if ( $this->default['id'] === $column_name ) {
+				$expect = (string) $object_id;
+			}
+
+			$this->assertSame( $expect, $output );
+		}
 	}
 
 	public static function column_tester( int $object_id ): void {

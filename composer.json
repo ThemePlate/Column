@@ -27,7 +27,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ThemePlate\\": "src"
+			"ThemePlate\\Column\\": "src"
 		}
 	},
 	"autoload-dev": {
