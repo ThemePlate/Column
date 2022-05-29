@@ -14,6 +14,7 @@ class ColumnTest extends WP_UnitTestCase {
 		'id'       => 'test',
 		'title'    => 'Tester',
 		'callback' => array( __CLASS__, 'column_tester' ),
+		'specific' => 'custom',
 	);
 
 	// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-posts-list-table.php#L739
@@ -28,9 +29,9 @@ class ColumnTest extends WP_UnitTestCase {
 		return array(
 			'with post type specified' => array(
 				'post_type',
-				'custom',
-				array( 'custom_posts' ),
-				array( 'custom_posts' ),
+				$this->default['specific'],
+				array( $this->default['specific'] . '_posts' ),
+				array( $this->default['specific'] . '_posts' ),
 			),
 			'with post type but empty' => array(
 				'post_type',
@@ -40,9 +41,9 @@ class ColumnTest extends WP_UnitTestCase {
 			),
 			'with taxonomy specified'  => array(
 				'taxonomy',
-				'custom',
-				array( 'edit-custom' ),
-				array( 'custom' ),
+				$this->default['specific'],
+				array( 'edit-' . $this->default['specific'] ),
+				array( $this->default['specific'] ),
 			),
 			'with taxonomy but empty'  => array(
 				'taxonomy',
@@ -52,7 +53,7 @@ class ColumnTest extends WP_UnitTestCase {
 			),
 			'with users specified'     => array(
 				'users',
-				'custom',
+				$this->default['specific'],
 				array( 'users' ),
 				array( 'users' ),
 			),
@@ -98,13 +99,13 @@ class ColumnTest extends WP_UnitTestCase {
 		$config = array(
 			'title'    => $this->default['title'],
 			'location' => 'post_type',
-			'specific' => 'custom',
+			'specific' => $this->default['specific'],
 			'position' => $position,
 			'class'    => $class,
 		);
 		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
 
-		$output = apply_filters( 'manage_custom_posts_columns', $this->columns );
+		$output = apply_filters( 'manage_' . $config['specific'] . '_posts_columns', $this->columns );
 		$expect = $position > 0 ? $position : count( $output ) - 1;
 		$this->assertIsArray( $output );
 		$this->assertArrayHasKey( $key, $output );
@@ -126,7 +127,7 @@ class ColumnTest extends WP_UnitTestCase {
 	public function test_populate_columns( string $type ): void {
 		$config = array(
 			'location' => $type,
-			'specific' => 'custom',
+			'specific' => $this->default['specific'],
 		);
 		( new Column( $this->default['id'], $this->default['callback'], $config ) )->init();
 
@@ -144,13 +145,13 @@ class ColumnTest extends WP_UnitTestCase {
 
 				ob_start();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-posts-list-table.php#L1349
-				do_action( 'manage_custom_posts_custom_column', $column_name, $object_id );
+				do_action( 'manage_' . $config['specific'] . '_posts_custom_column', $column_name, $object_id );
 
 				$output = ob_get_clean();
 			} elseif ( 'taxonomy' === $type ) {
 				$object_id = $this->factory()->term->create();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-terms-list-table.php#L638
-				$output = apply_filters( 'manage_custom_custom_column', '', $column_name, $object_id );
+				$output = apply_filters( 'manage_' . $config['specific'] . '_custom_column', '', $column_name, $object_id );
 			} elseif ( 'users' === $type ) {
 				$object_id = $this->factory()->user->create();
 				// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-users-list-table.php#L615
