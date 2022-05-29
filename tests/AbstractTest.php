@@ -33,7 +33,7 @@ abstract class AbstractTest extends WP_UnitTestCase {
 	 * @dataProvider for_firing_init_actually_add_hooks
 	 */
 	public function test_firing_init_actually_add_hooks( bool $location, array $modifies, array $populates ): void {
-		$column = $this->get_tested_class( $this->default['id'], $this->default['callback'] );
+		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
 		if ( $location ) {
 			/** @var HasLocation $column */
@@ -60,11 +60,10 @@ abstract class AbstractTest extends WP_UnitTestCase {
 	 */
 	public function test_modify_columns( string $class, string $key, int $position ): void {
 		$config = array(
-			'title'    => $this->default['title'],
 			'position' => $position,
 			'class'    => $class,
 		);
-		$column = $this->get_tested_class( $this->default['id'], $this->default['callback'], $config );
+		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'], $config );
 
 		if ( method_exists( $column, 'location' ) ) {
 			$column->location( $this->default['location'] );
@@ -77,12 +76,12 @@ abstract class AbstractTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $output );
 		$this->assertArrayHasKey( $key, $output );
-		$this->assertSame( $config['title'], $output[ $key ] );
-		$this->assertSame( $expect, array_search( $config['title'], array_values( $output ), true ) );
+		$this->assertSame( $this->default['title'], $output[ $key ] );
+		$this->assertSame( $expect, array_search( $this->default['title'], array_values( $output ), true ) );
 	}
 
 	public function test_populate_columns(): void {
-		$column = $this->get_tested_class( $this->default['id'], $this->default['callback'] );
+		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
 		if ( method_exists( $column, 'location' ) ) {
 			$column->location( $this->default['location'] );

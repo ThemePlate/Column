@@ -21,42 +21,28 @@ abstract class BaseColumn implements CommonInterface {
 		'callback_args' => array(),
 		'class'         => '',
 	);
-	protected string $identifier;
+	protected string $title;
 	protected array $config;
 
 
-	public function __construct( string $identifier, callable $callback, array $config = array() ) {
+	public function __construct( string $title, callable $callback, array $config = array() ) {
 
-		$this->identifier = $identifier;
-		$this->callback   = $callback;
-		$this->config     = $this->check( $config );
+		$this->title    = $title;
+		$this->callback = $callback;
+		$this->config   = $this->check( $config );
 
 	}
 
 
 	protected function check( array $config ): array {
 
-		$config['title'] = $this->maybe_convert( $config['title'] ?? '' );
-
 		$config = array_merge( $this->defaults, $config );
+		$sluggy = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
 
-		$config['key'] = trim( $this->identifier . ' ' . $config['class'] );
-
-		$this->column_key    = $config['key'];
+		$this->column_key    = trim( $sluggy . ' ' . $config['class'] );
 		$this->callback_args = $config['callback_args'];
 
 		return $config;
-
-	}
-
-
-	protected function maybe_convert( string $title ): string {
-
-		if ( '' !== $title ) {
-			return $title;
-		}
-
-		return mb_convert_case( $this->identifier, MB_CASE_TITLE, 'UTF-8' );
 
 	}
 
@@ -78,11 +64,9 @@ abstract class BaseColumn implements CommonInterface {
 
 	public function modify( array $columns ): array {
 
-		$config = $this->config;
+		$columns[ $this->column_key ] = $this->title;
 
-		$columns[ $config['key'] ] = $config['title'];
-
-		$position = $config['position'];
+		$position = $this->config['position'];
 
 		if ( $position > 0 ) {
 			$item    = array_slice( $columns, -1, 1, true );

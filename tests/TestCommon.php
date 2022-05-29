@@ -9,7 +9,7 @@ namespace Tests;
 trait TestCommon {
 	protected array $default = array(
 		'id'       => 'test',
-		'title'    => 'Tester',
+		'title'    => 'Test',
 		'callback' => array( __CLASS__, 'column_tester' ),
 		'location' => 'custom',
 	);
