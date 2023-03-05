@@ -18,11 +18,8 @@ function pretty_print( $object_id ) {
 
 ### Available config
 ```php
-$defaults = array(
-	'position'      => 0,
-	'callback_args' => array(),
-	'class'         => '',
-);
+// Before init
+$column->position( 0 )->args( array() )->class( '' );
 ```
 
 ### Specific location
