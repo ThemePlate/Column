@@ -40,7 +40,7 @@ abstract class BaseColumn implements CommonInterface {
 		$config = array_merge( $this->defaults, $config );
 		$sluggy = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
 
-		$this->column_key    = trim( $sluggy . ' ' . $config['class'] );
+		$this->column_key    = $sluggy;
 		$this->callback_args = $config['callback_args'];
 
 		return $config;
@@ -66,9 +66,20 @@ abstract class BaseColumn implements CommonInterface {
 	}
 
 
+	public function class( string $class ): self {
+
+		$this->config['class'] = $class;
+
+		return $this;
+
+	}
+
+
 	public function init(): void {
 
 		$args = ( $this instanceof PopulateActionInterface ) ? 2 : 3;
+
+		$this->column_key = trim( $this->column_key . ' ' . $this->config['class'] );
 
 		foreach ( $this->context() as $item ) {
 			add_filter( 'manage_' . $item['modify'] . '_columns', array( $this, 'modify' ) );

@@ -54,14 +54,13 @@ abstract class AbstractTest extends WP_UnitTestCase {
 	 * @dataProvider for_modify_columns
 	 */
 	public function test_modify_columns( string $title, string $class, string $column_key, int $position ): void {
-		$config = compact( 'class' );
-		$column = $this->get_tested_class( $title, $this->default['callback'], $config );
+		$column = $this->get_tested_class( $title, $this->default['callback'] );
 
 		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
 		}
 
-		$column->position( $position )->init();
+		$column->position( $position )->class( $class )->init();
 
 		$output = apply_filters( $this->get_modify_filter_hook_name( $this->default['location'] ), $this->columns );
 		$expect = $position > 0 ? $position : count( $output ) - 1;

@@ -17,6 +17,8 @@ interface CommonInterface {
 
 	public function args( array $args ): self;
 
+	public function class( string $class ): self;
+
 	public function init(): void;
 
 	public function modify( array $columns ): array;
