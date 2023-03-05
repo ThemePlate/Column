@@ -72,11 +72,15 @@ abstract class AbstractTest extends WP_UnitTestCase {
 		$this->assertSame( $expect, array_search( $title, array_values( $output ), true ) );
 	}
 
-	public function test_populate_columns(): void {
+	protected function get_populate_columns( bool $with_args ) {
 		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
 		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
+		}
+
+		if ( $with_args ) {
+			$column->args( array( 'test' ) );
 		}
 
 		$column->init();
@@ -89,9 +93,21 @@ abstract class AbstractTest extends WP_UnitTestCase {
 
 			if ( $this->default['id'] === $column_name ) {
 				$expect = (string) $object_id;
+
+				if ( $with_args ) {
+					$expect .= '["test"]';
+				}
 			}
 
 			$this->assertSame( $expect, $this->get_populate_output( $column_name, $object_id ) );
 		}
+	}
+
+	public function test_populate_columns_no_args(): void {
+		$this->get_populate_columns( false );
+	}
+
+	public function test_populate_columns_with_args(): void {
+		$this->get_populate_columns( true );
 	}
 }

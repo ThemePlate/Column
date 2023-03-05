@@ -34,7 +34,11 @@ trait TestCommon {
 		);
 	}
 
-	public static function column_tester( int $object_id ): void {
+	public static function column_tester( int $object_id, array $args ): void {
 		echo $object_id; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		if ( ! empty( $args ) ) {
+			echo json_encode( $args );
+		}
 	}
 }
