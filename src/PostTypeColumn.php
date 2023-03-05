@@ -9,11 +9,12 @@
 
 namespace ThemePlate\Column;
 
+use ThemePlate\Column\Interfaces\LocationInterface;
 use ThemePlate\Column\Interfaces\PopulateActionInterface;
 use ThemePlate\Column\Traits\HasLocation;
 use ThemePlate\Column\Traits\PopulateWillEcho;
 
-class PostTypeColumn extends BaseColumn implements PopulateActionInterface {
+class PostTypeColumn extends BaseColumn implements LocationInterface, PopulateActionInterface {
 
 	use HasLocation;
 	use PopulateWillEcho;

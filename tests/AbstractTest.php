@@ -7,7 +7,7 @@
 namespace Tests;
 
 use ThemePlate\Column\Interfaces\CommonInterface;
-use ThemePlate\Column\Traits\HasLocation;
+use ThemePlate\Column\Interfaces\LocationInterface;
 use WP_UnitTestCase;
 
 abstract class AbstractTest extends WP_UnitTestCase {
@@ -36,8 +36,8 @@ abstract class AbstractTest extends WP_UnitTestCase {
 		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
 		if ( $has_location ) {
-			/** @var HasLocation $column */
 			foreach ( $locations as $location ) {
+				/** @var LocationInterface $column */
 				$column->location( $location );
 			}
 		}
@@ -57,7 +57,7 @@ abstract class AbstractTest extends WP_UnitTestCase {
 		$config = compact( 'class' );
 		$column = $this->get_tested_class( $title, $this->default['callback'], $config );
 
-		if ( method_exists( $column, 'location' ) ) {
+		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
 		}
 
@@ -75,7 +75,7 @@ abstract class AbstractTest extends WP_UnitTestCase {
 	public function test_populate_columns(): void {
 		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
 
-		if ( method_exists( $column, 'location' ) ) {
+		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
 		}
 

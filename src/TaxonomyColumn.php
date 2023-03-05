@@ -9,11 +9,12 @@
 
 namespace ThemePlate\Column;
 
+use ThemePlate\Column\Interfaces\LocationInterface;
 use ThemePlate\Column\Interfaces\PopulateFilterInterface;
 use ThemePlate\Column\Traits\HasLocation;
 use ThemePlate\Column\Traits\PopulateWillReturn;
 
-class TaxonomyColumn extends BaseColumn implements PopulateFilterInterface {
+class TaxonomyColumn extends BaseColumn implements LocationInterface, PopulateFilterInterface {
 
 	use HasLocation;
 	use PopulateWillReturn;
