@@ -48,6 +48,24 @@ abstract class BaseColumn implements CommonInterface {
 	}
 
 
+	public function position( int $position ): self {
+
+		$this->config['position'] = $position;
+
+		return $this;
+
+	}
+
+
+	public function args( array $args ): self {
+
+		$this->callback_args = $args;
+
+		return $this;
+
+	}
+
+
 	public function init(): void {
 
 		$args = ( $this instanceof PopulateActionInterface ) ? 2 : 3;
