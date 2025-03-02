@@ -38,7 +38,7 @@ trait TestCommon {
 		echo $object_id; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		if ( ! empty( $args ) ) {
-			echo json_encode( $args );
+			echo json_encode( $args ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		}
 	}
 }
