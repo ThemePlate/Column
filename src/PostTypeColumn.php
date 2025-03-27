@@ -26,7 +26,7 @@ class PostTypeColumn extends BaseColumn implements LocationInterface, PopulateAc
 
 		$post_types = $this->locations;
 
-		if ( empty( $post_types ) ) {
+		if ( array() === $post_types ) {
 			$post_types = array( 'post', 'page' );
 		}
 

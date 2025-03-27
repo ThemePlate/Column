@@ -26,7 +26,7 @@ class TaxonomyColumn extends BaseColumn implements LocationInterface, PopulateFi
 
 		$taxonomies = $this->locations;
 
-		if ( empty( $taxonomies ) ) {
+		if ( array() === $taxonomies ) {
 			$taxonomies = array( 'category', 'post_tag' );
 		}
 
