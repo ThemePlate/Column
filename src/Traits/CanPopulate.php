@@ -19,15 +19,15 @@ trait CanPopulate {
 	protected string $column_key = '';
 
 
-	protected function action_callback( int $object_id, bool $return = false ) {
+	protected function action_callback( int $object_id, bool $will_return = false ) {
 
-		if ( $return ) {
+		if ( $will_return ) {
 			ob_start();
 		}
 
 		$output = call_user_func( $this->callback, $object_id, $this->callback_args );
 
-		if ( $return ) {
+		if ( $will_return ) {
 			return ob_get_clean();
 		}
 

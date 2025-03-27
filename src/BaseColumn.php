@@ -75,9 +75,9 @@ abstract class BaseColumn implements CommonInterface {
 	}
 
 
-	public function class( string $class ): self {
+	public function class( string $classname ): self {
 
-		$this->config['class'] = $class;
+		$this->config['class'] = $classname;
 
 		return $this;
 
