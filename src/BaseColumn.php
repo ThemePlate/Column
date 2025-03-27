@@ -23,27 +23,36 @@ abstract class BaseColumn implements CommonInterface {
 		'class'         => '',
 	);
 	protected string $title;
-	protected array $config;
+
+	protected array $config = array();
 
 
 	public function __construct( string $title, callable $callback, array $config = array() ) {
 
 		$this->title    = $title;
 		$this->callback = $callback;
-		$this->config   = $this->check( $config );
+
+		$this->initialize( $config );
 
 	}
 
 
-	protected function check( array $config ): array {
+	protected function initialize( array $config ): void {
 
-		$config = array_merge( $this->defaults, $config );
-		$sluggy = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
+		$this->column_key = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
 
-		$this->column_key    = $sluggy;
-		$this->callback_args = $config['callback_args'];
+		$this->config( $config );
 
-		return $config;
+	}
+
+
+	public function config( array $config ): self {
+
+		$this->config = array_merge( $this->defaults, $this->config, $config );
+
+		$this->callback_args = $this->config['callback_args'];
+
+		return $this;
 
 	}
 

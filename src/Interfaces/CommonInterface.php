@@ -13,6 +13,8 @@ interface CommonInterface {
 
 	public function __construct( string $title, callable $callback, array $config = array() );
 
+	public function config( array $config ): self;
+
 	public function position( int $position ): self;
 
 	public function args( array $args ): self;
