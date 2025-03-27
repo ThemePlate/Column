@@ -10,7 +10,7 @@ use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\Interfaces\LocationInterface;
 use WP_UnitTestCase;
 
-abstract class AbstractTest extends WP_UnitTestCase {
+abstract class AbstractTester extends WP_UnitTestCase {
 	use TestCommon;
 
 	public const MODIFY_FILTER = 'manage_%s_columns';

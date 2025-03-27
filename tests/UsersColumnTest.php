@@ -9,7 +9,7 @@ namespace Tests;
 use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\UsersColumn;
 
-class UsersColumnTest extends AbstractTest {
+class UsersColumnTest extends AbstractTester {
 	protected function get_tested_class( string $identifier, callable $callback, array $config = array() ): CommonInterface {
 		return new UsersColumn( $identifier, $callback, $config );
 	}

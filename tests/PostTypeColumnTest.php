@@ -9,7 +9,7 @@ namespace Tests;
 use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\PostTypeColumn;
 
-class PostTypeColumnTest extends AbstractTest {
+class PostTypeColumnTest extends AbstractTester {
 	protected function get_tested_class( string $identifier, callable $callback, array $config = array() ): CommonInterface {
 		return new PostTypeColumn( $identifier, $callback, $config );
 	}

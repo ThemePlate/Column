@@ -9,7 +9,7 @@ namespace Tests;
 use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\TaxonomyColumn;
 
-class TaxonomyColumnTest extends AbstractTest {
+class TaxonomyColumnTest extends AbstractTester {
 	protected function get_tested_class( string $identifier, callable $callback, array $config = array() ): CommonInterface {
 		return new TaxonomyColumn( $identifier, $callback, $config );
 	}
