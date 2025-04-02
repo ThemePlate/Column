@@ -11,9 +11,9 @@ function pretty_print( $object_id ) {
 	echo '&hearts;&nbsp;<b>' . $object_id . '</b> &mdash;&rsaquo;';
 };
 
-( new PostTypeColumn( 'Post ID', 'pretty_print' ) )->init();
-( new TaxonomyColumn( 'Term ID', 'pretty_print' ) )->init();
-( new UsersColumn( 'User ID', 'pretty_print' ) )->init();
+( new PostTypeColumn( 'Post ID' )->callback( 'pretty_print' ) )->init();
+( new TaxonomyColumn( 'Term ID' )->callback( 'pretty_print' ) )->init();
+( new UsersColumn( 'User ID' )->callback( 'pretty_print' ) )->init();
 ```
 
 ### Available config
