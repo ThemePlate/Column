@@ -11,7 +11,9 @@ namespace ThemePlate\Column\Interfaces;
 
 interface CommonInterface {
 
-	public function __construct( string $title, callable $callback, array $config = array() );
+	public function __construct( string $title, ?callable $callback = null, array $config = array() );
+
+	public function callback( callable $callback ): self;
 
 	public function config( array $config ): self;
 

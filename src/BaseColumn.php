@@ -27,10 +27,13 @@ abstract class BaseColumn implements CommonInterface {
 	protected array $config = array();
 
 
-	public function __construct( string $title, callable $callback, array $config = array() ) {
+	public function __construct( string $title, ?callable $callback = null, array $config = array() ) {
 
-		$this->title    = $title;
-		$this->callback = $callback;
+		$this->title = $title;
+
+		if ( null !== $callback ) {
+			$this->callback( $callback );
+		}
 
 		$this->initialize( $config );
 
@@ -42,6 +45,15 @@ abstract class BaseColumn implements CommonInterface {
 		$this->column_key = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
 
 		$this->config( $config );
+
+	}
+
+
+	public function callback( callable $callback ): self {
+
+		$this->callback = $callback;
+
+		return $this;
 
 	}
 

@@ -17,7 +17,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 
 	public const POPULATE_FILTER = 'manage_%s_custom_column';
 
-	abstract protected function get_tested_class( string $identifier, callable $callback, array $config = array() ): CommonInterface;
+	abstract protected function get_tested_class( string $identifier, ?callable $callback = null, array $config = array() ): CommonInterface;
 
 	abstract public function for_firing_init_actually_add_hooks(): array;
 
@@ -54,7 +54,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 	 * @dataProvider for_modify_columns
 	 */
 	public function test_modify_columns( string $title, string $classname, string $column_key, int $position ): void {
-		$column = $this->get_tested_class( $title, $this->default['callback'] );
+		$column = $this->get_tested_class( $title );
 
 		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
@@ -72,7 +72,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 	}
 
 	protected function get_populate_columns( bool $with_args ) {
-		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
+		$column = $this->get_tested_class( $this->default['title'] );
 
 		if ( $column instanceof LocationInterface ) {
 			$column->location( $this->default['location'] );
@@ -82,7 +82,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 			$column->args( array( 'test' ) );
 		}
 
-		$column->init();
+		$column->callback( $this->default['callback'] )->init();
 
 		$column_names = array_merge( array_keys( $this->columns ), array( $this->default['id'] ) );
 		$object_id    = $this->factory_create_object();
