@@ -102,6 +102,11 @@ abstract class AbstractTester extends WP_UnitTestCase {
 		}
 	}
 
+	public function test_populate_no_callback(): void {
+		$this->get_tested_class( $this->default['title'] )->init();
+		$this->assertSame( '', $this->get_populate_output( $this->default['id'], $this->factory_create_object() ) );
+	}
+
 	public function test_populate_columns_no_args(): void {
 		$this->get_populate_columns( false );
 	}
