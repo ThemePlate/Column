@@ -17,7 +17,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 
 	public const POPULATE_FILTER = 'manage_%s_custom_column';
 
-	abstract protected function get_tested_class( string $identifier, ?callable $callback = null, array $config = array() ): CommonInterface;
+	abstract protected function get_tested_class( string $identifier ): CommonInterface;
 
 	abstract public function for_firing_init_actually_add_hooks(): array;
 
@@ -33,7 +33,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 	 * @dataProvider for_firing_init_actually_add_hooks
 	 */
 	public function test_firing_init_actually_add_hooks( bool $has_location, array $locations ): void {
-		$column = $this->get_tested_class( $this->default['title'], $this->default['callback'] );
+		$column = $this->get_tested_class( $this->default['title'] );
 
 		if ( $has_location ) {
 			foreach ( $locations as $location ) {

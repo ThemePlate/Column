@@ -35,13 +35,6 @@ abstract class BaseColumn implements CommonInterface {
 			$this->callback( $callback );
 		}
 
-		$this->initialize( $config );
-
-	}
-
-
-	protected function initialize( array $config ): void {
-
 		$this->column_key = strtolower( str_replace( array( ' ', '_' ), '-', $this->title ) );
 
 		$this->config( $config );

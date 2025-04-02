@@ -10,8 +10,8 @@ use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\UsersColumn;
 
 class UsersColumnTest extends AbstractTester {
-	protected function get_tested_class( string $identifier, ?callable $callback = null, array $config = array() ): CommonInterface {
-		return new UsersColumn( $identifier, $callback, $config );
+	protected function get_tested_class( string $identifier ): CommonInterface {
+		return new UsersColumn( $identifier );
 	}
 
 	protected function factory_create_object(): int {

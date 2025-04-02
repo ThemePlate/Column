@@ -10,8 +10,8 @@ use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\TaxonomyColumn;
 
 class TaxonomyColumnTest extends AbstractTester {
-	protected function get_tested_class( string $identifier, ?callable $callback = null, array $config = array() ): CommonInterface {
-		return new TaxonomyColumn( $identifier, $callback, $config );
+	protected function get_tested_class( string $identifier ): CommonInterface {
+		return new TaxonomyColumn( $identifier );
 	}
 
 	protected function factory_create_object(): int {

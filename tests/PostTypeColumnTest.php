@@ -10,8 +10,8 @@ use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\PostTypeColumn;
 
 class PostTypeColumnTest extends AbstractTester {
-	protected function get_tested_class( string $identifier, ?callable $callback = null, array $config = array() ): CommonInterface {
-		return new PostTypeColumn( $identifier, $callback, $config );
+	protected function get_tested_class( string $identifier ): CommonInterface {
+		return new PostTypeColumn( $identifier );
 	}
 
 	protected function factory_create_object(): int {
