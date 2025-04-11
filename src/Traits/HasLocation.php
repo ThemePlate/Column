@@ -11,6 +11,7 @@ namespace ThemePlate\Column\Traits;
 
 trait HasLocation {
 
+	/** @var string[] */
 	protected array $locations = array();
 
 

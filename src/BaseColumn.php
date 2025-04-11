@@ -17,6 +17,13 @@ abstract class BaseColumn implements CommonInterface {
 
 	use CanPopulate;
 
+	/**
+	 * @var array{
+	 *     position: int,
+	 *     callback_args: string[],
+	 *     class: string
+	 * }
+	 */
 	protected array $defaults = array(
 		'position'      => 0,
 		'callback_args' => array(),
@@ -24,9 +31,11 @@ abstract class BaseColumn implements CommonInterface {
 	);
 	protected string $title;
 
+	/** @var array<string, mixed> */
 	protected array $config = array();
 
 
+	/** @param array<string, mixed> $config */
 	public function __construct( string $title, ?callable $callback = null, array $config = array() ) {
 
 		$this->title = $title;
@@ -71,6 +80,7 @@ abstract class BaseColumn implements CommonInterface {
 	}
 
 
+	/** @param string[] $args */
 	public function args( array $args ): self {
 
 		$this->callback_args = $args;
@@ -97,15 +107,21 @@ abstract class BaseColumn implements CommonInterface {
 
 		foreach ( $this->context() as $item ) {
 			add_filter( 'manage_' . $item['modify'] . '_columns', array( $this, 'modify' ) );
+			// @phpstan-ignore argument.type
 			add_action( 'manage_' . $item['populate'] . '_custom_column', array( $this, 'populate' ), 10, $args );
 		}
 
 	}
 
 
+	/** @return array<int, array{modify: string, populate: string}> */
 	abstract protected function context(): array;
 
 
+	/**
+	 * @param array<string, string> $columns
+	 * @return array<string, string>
+	 */
 	public function modify( array $columns ): array {
 
 		$columns[ $this->column_key ] = $this->title;

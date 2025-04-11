@@ -7,6 +7,13 @@
 namespace Tests;
 
 trait TestCommon {
+	/**
+	 * @var array{
+	 *     id: string,
+	 *     title: string,
+	 *     callback: callable,
+	 *     location: string
+	 * } */
 	protected array $default = array(
 		'id'       => 'test',
 		'title'    => 'Test',
@@ -15,6 +22,7 @@ trait TestCommon {
 	);
 
 	// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-posts-list-table.php#L739
+	/** @var array<string, string> */
 	protected array $columns = array(
 		'cb'     => '<input type="checkbox" />',
 		'title'  => 'Title',
@@ -22,6 +30,7 @@ trait TestCommon {
 		'date'   => 'Date',
 	);
 
+	/** @return array<string, array<int, string|int>> */
 	public function for_modify_columns(): array {
 		return array(
 			'with class string'    => array( $this->default['title'], 'this', $this->default['id'] . ' this', 1 ),
@@ -34,6 +43,7 @@ trait TestCommon {
 		);
 	}
 
+	/** @param array<mixed> $args */
 	public static function column_tester( int $object_id, array $args ): void {
 		echo $object_id; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 

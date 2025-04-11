@@ -17,6 +17,7 @@ class UsersColumn extends BaseColumn implements PopulateFilterInterface {
 	use PopulateWillReturn;
 
 
+	/** @return array{array{modify: string, populate: string}} */
 	protected function context(): array {
 
 		$context = array(

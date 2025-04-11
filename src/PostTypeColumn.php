@@ -20,6 +20,7 @@ class PostTypeColumn extends BaseColumn implements LocationInterface, PopulateAc
 	use PopulateWillEcho;
 
 
+	/** @return array<int, array{modify: string, populate: string}> */
 	protected function context(): array {
 
 		$context = array();

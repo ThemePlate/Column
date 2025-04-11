@@ -8,6 +8,7 @@ namespace Tests;
 
 use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\UsersColumn;
+use WP_Error;
 
 class UsersColumnTest extends AbstractTester {
 	protected function get_tested_class( string $identifier ): CommonInterface {
@@ -15,9 +16,12 @@ class UsersColumnTest extends AbstractTester {
 	}
 
 	protected function factory_create_object(): int {
-		return $this->factory()->user->create();
+		$object = $this->factory()->user->create();
+
+		return $object instanceof WP_Error ? 0 : $object;
 	}
 
+	/** @return array<string, array<int, bool|string[]>> */
 	public function for_firing_init_actually_add_hooks(): array {
 		return array(
 			'with no location intended' => array(

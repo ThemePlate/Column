@@ -20,6 +20,7 @@ class TaxonomyColumn extends BaseColumn implements LocationInterface, PopulateFi
 	use PopulateWillReturn;
 
 
+	/** @return array<int, array{modify: string, populate: string}> */
 	protected function context(): array {
 
 		$context = array();

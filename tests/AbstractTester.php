@@ -19,6 +19,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 
 	abstract protected function get_tested_class( string $identifier ): CommonInterface;
 
+	/** @return array<string, array<int, bool|string[]>> */
 	abstract public function for_firing_init_actually_add_hooks(): array;
 
 	abstract protected function factory_create_object(): int;
@@ -30,6 +31,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 	abstract protected function get_populate_output( string $column_name, int $object_id ): string;
 
 	/**
+	 * @param string[] $locations
 	 * @dataProvider for_firing_init_actually_add_hooks
 	 */
 	public function test_firing_init_actually_add_hooks( bool $has_location, array $locations ): void {
@@ -37,7 +39,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 
 		if ( $has_location ) {
 			foreach ( $locations as $location ) {
-				/** @var CommonInterface|LocationInterface $column */
+				/** @var CommonInterface&LocationInterface $column */
 				$column->location( $location );
 			}
 		}
@@ -71,7 +73,7 @@ abstract class AbstractTester extends WP_UnitTestCase {
 		$this->assertSame( $expect, array_search( $title, array_values( $output ), true ) );
 	}
 
-	protected function get_populate_columns( bool $with_args ) {
+	protected function get_populate_columns( bool $with_args ): void {
 		$column = $this->get_tested_class( $this->default['title'] );
 
 		if ( $column instanceof LocationInterface ) {

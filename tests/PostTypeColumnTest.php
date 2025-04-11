@@ -8,6 +8,7 @@ namespace Tests;
 
 use ThemePlate\Column\Interfaces\CommonInterface;
 use ThemePlate\Column\PostTypeColumn;
+use WP_Error;
 
 class PostTypeColumnTest extends AbstractTester {
 	protected function get_tested_class( string $identifier ): CommonInterface {
@@ -15,9 +16,12 @@ class PostTypeColumnTest extends AbstractTester {
 	}
 
 	protected function factory_create_object(): int {
-		return $this->factory()->post->create();
+		$object = $this->factory()->post->create();
+
+		return $object instanceof WP_Error ? 0 : $object;
 	}
 
+	/** @return array<string, array<int, bool|string[]>> */
 	public function for_firing_init_actually_add_hooks(): array {
 		return array(
 			'with location specified'    => array(
@@ -48,6 +52,6 @@ class PostTypeColumnTest extends AbstractTester {
 		// https://core.trac.wordpress.org/browser/tags/6.0/src/wp-admin/includes/class-wp-posts-list-table.php#L1349
 		do_action( $this->get_populate_filter_hook_name( $this->default['location'] ), $column_name, $object_id );
 
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 }

@@ -13,10 +13,13 @@ trait CanPopulate {
 
 	/** @var ?callable */
 	protected $callback;
+
+	/** @var string[] */
 	protected array $callback_args;
 	protected string $column_key = '';
 
 
+	/** @return mixed */
 	protected function action_callback( int $object_id, bool $will_return = false ) {
 
 		if ( null === $this->callback ) {
