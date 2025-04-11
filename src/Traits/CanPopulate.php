@@ -11,10 +11,8 @@ namespace ThemePlate\Column\Traits;
 
 trait CanPopulate {
 
-	/**
-	 * @var callable
-	 */
-	protected $callback = null;
+	/** @var ?callable */
+	protected $callback;
 	protected array $callback_args;
 	protected string $column_key = '';
 

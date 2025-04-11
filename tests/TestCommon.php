@@ -10,7 +10,7 @@ trait TestCommon {
 	protected array $default = array(
 		'id'       => 'test',
 		'title'    => 'Test',
-		'callback' => array( __CLASS__, 'column_tester' ),
+		'callback' => array( self::class, 'column_tester' ),
 		'location' => 'custom',
 	);
 
